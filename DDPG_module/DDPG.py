@@ -41,9 +41,9 @@ class Actor(nn.Module,RoboticEnv):
         RoboticEnv.__init__(self)
 
         self.channel = Channel(_iscomplex)
-        self.sensor_digit = Digitalize(quant_max=1.2,qam_order=qam_order)
-        self.action_digit = Digitalize(quant_max=Act_max, qam_order=qam_order)
-        self.mlp = MLP(self.state_dim*2, self.action_dim,
+        self.sensor_digit = Digitalize(quant_max=0.6,q_bit = 6, M = 8)
+        self.action_digit = Digitalize(quant_max=Act_max,q_bit = 6, M = 8)
+        self.mlp = MLP(self.state_dim, self.action_dim,
                        num_neurons=Hyper_Param['num_neurons'],
                        hidden_act='ReLU',
                        out_act='Sigmoid')
@@ -53,17 +53,15 @@ class Actor(nn.Module,RoboticEnv):
         symbol_list = []
         seed = torch.randint(low=0, high=70000, size=(1,)).to(DEVICE).item()
 
-        ## Robot part
-        split_states = torch.split(state,self.num_sensor_output,dim=1)
-        for i in range(self.num_robot):
-            symbol = self.sensor_digit.Txapply(split_states[i])
-            symbol_list.append(symbol)
 
-        sensed_symbols = torch.cat(symbol_list,dim=1).to(DEVICE)
+        sensed_symbols = self.sensor_digit.Txapply(state)
+
         output = getattr(self.channel, channel_type)(sensed_symbols, seed,snr=SNR)
 
+        received = self.sensor_digit.Rxapply(output)
         ## Remote central unit
-        decision = self.mlp(output)
+        decision = self.mlp(received)
+
         action_symbols = self.action_digit.Txapply(decision).to(DEVICE)
         output = getattr(self.channel, channel_type)(action_symbols, seed, snr=SNR)
 
