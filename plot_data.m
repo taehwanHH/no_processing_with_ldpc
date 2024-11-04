@@ -5,13 +5,13 @@ file_date = '2024-11-03';
 channel = '/fading/';
 % latency = '200ms';
 
-lat = ["0ms"];
+lat = ["200ms"];
 
 for latency = lat
     channel_param = append(channel,latency);
     file_path = append(file_date,channel_param);
-    data_path = append(file_path,'/1/data.mat');
-    param_path = append(file_path,'/1/Hyper_Param.txt');
+    data_path = append(file_path,'/2/data.mat');
+    param_path = append(file_path,'/2/Hyper_Param.txt');
     param = readcell(param_path);
     
     main_param = struct();
