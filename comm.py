@@ -166,7 +166,7 @@ class LDPC:
         codeword = torch.matmul(message, self.G) % 2
         return codeword
 
-    def decode(self, received, max_iter=20):
+    def decode(self, received, max_iter=10):
         batch_size, num_blocks, _ = received.shape
         decoded = received.clone().to(self.device)  # 초기화: 받은 메시지를 그대로 복사
 

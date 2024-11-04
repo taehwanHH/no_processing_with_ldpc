@@ -1,7 +1,8 @@
 import torch
 import gym
-import glfw
 import mujoco_py
+import glfw
+
 from scipy.spatial.transform import Rotation as R
 from param import Hyper_Param
 from param_robot import Robot_Param
@@ -24,6 +25,7 @@ model = mujoco_py.load_model_from_path(xml_path)
 sim = mujoco_py.MjSim(model)
 viewer = mujoco_py.MjViewer(sim)
 
+
 viewer.cam.azimuth = 180
 viewer.cam.elevation = -5
 viewer.cam.distance = 5
@@ -32,8 +34,9 @@ viewer._run_speed = 128
 # Get the viewer's window handle
 window = viewer.window
 
-# Ensure the window is not in fullscreen mode by setting monitor to None
-glfw.set_window_monitor(window, None, 100, 100, 1280, 720, glfw.DONT_CARE)
+
+
+glfw.set_window_monitor(window, None, 1000, 100, 500, 500, glfw.DONT_CARE)
 # Optionally, you can set the window title
 glfw.set_window_title(window, "MuJoCo Simulation")
 
